@@ -1,0 +1,11 @@
+.*
+*~
+
+__pycache__
+
+docker-compose.override.yml
+
+!.dockerignore
+!.gitignore
+!.isort.cfg
+!.github

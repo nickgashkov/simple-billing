@@ -1,0 +1,10 @@
+.*
+*~
+
+__pycache__
+
+docker-compose.override.yml
+docker-compose.yml
+Dockerfile
+Makefile
+mypy.ini
