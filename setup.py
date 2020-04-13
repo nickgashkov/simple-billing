@@ -18,4 +18,9 @@ setup(
     install_requires=requires('requirements/base.txt'),
     extras_require={'dev': requires('requirements/dev.txt')},
     zip_safe=False,
+    entry_points={
+        'console_scripts': [
+            'billing-api = billing.api.__main__:main',
+        ]
+    },
 )

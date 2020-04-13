@@ -1,3 +1,4 @@
 aiohttp
 aiohttp-security
+click
 sqlalchemy

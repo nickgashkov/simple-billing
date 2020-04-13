@@ -4,6 +4,9 @@ services:
   api:
     build:
       context: .
+    command: billing-api
+    depends_on:
+      - db
 
   db:
     image: postgres:12-alpine

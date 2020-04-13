@@ -1,7 +1,8 @@
 -r base.txt
 
-mypy
-pytest
-isort
 flake8
+isort
+mypy
 pip-tools
+pytest
+pytest-aiohttp

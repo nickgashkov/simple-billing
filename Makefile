@@ -1,6 +1,9 @@
 build:
 	@docker-compose build
 
+run: build
+	docker-compose up api
+
 shell:
 	@docker-compose run --rm api sh
 
@@ -21,8 +24,8 @@ test:
 	@docker-compose run --rm api pytest
 
 validate:
-	@make build
-	@make isort
-	@make lint
-	@make mypy
-	@make test
+	make build
+	make isort
+	make lint
+	make mypy
+	make test
