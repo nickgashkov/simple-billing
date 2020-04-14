@@ -4,6 +4,9 @@ services:
   api:
     build:
       context: .
+    environment:
+      BILLING_DB_DSN: postgres://postgres:postgres@db:5432/billing?sslmode=disable
+      BILLING_DB_DSN_TEST: postgres://postgres:postgres@db:5432/billing-test?sslmode=disable
     command: billing-api
     depends_on:
       - db

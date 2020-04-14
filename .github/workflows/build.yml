@@ -11,6 +11,21 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    container: python:3.8-slim
+    services:
+      db:
+        image: postgres:12-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: billing-test
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
 
@@ -39,3 +54,5 @@ jobs:
 
       - name: Test
         run: pytest
+        env:
+          BILLING_DB_DSN_TEST: postgres://postgres:postgres@db:5432/billing-test?sslmode=disable

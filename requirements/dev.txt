@@ -6,6 +6,8 @@
 #
 aiohttp-security==0.4.0   # via -r requirements/base.txt
 aiohttp==3.6.2            # via -r requirements/base.txt, aiohttp-security, jibrel-aiohttp-swagger, pytest-aiohttp
+aiopg==1.0.0              # via -r requirements/base.txt
+alembic==1.4.2            # via -r requirements/base.txt
 async-timeout==3.0.1      # via -r requirements/base.txt, aiohttp
 attrs==19.3.0             # via -r requirements/base.txt, aiohttp, pytest
 chardet==3.0.4            # via -r requirements/base.txt, aiohttp
@@ -16,6 +18,8 @@ idna==2.9                 # via -r requirements/base.txt, yarl
 isort==4.3.21             # via -r requirements/dev.in
 jibrel-aiohttp-swagger==0.1.0  # via -r requirements/base.txt
 loguru==0.4.1             # via -r requirements/base.txt
+mako==1.1.2               # via -r requirements/base.txt, alembic
+markupsafe==1.1.1         # via -r requirements/base.txt, mako
 mccabe==0.6.1             # via flake8
 more-itertools==8.2.0     # via pytest
 multidict==4.7.5          # via -r requirements/base.txt, aiohttp, yarl
@@ -24,15 +28,18 @@ mypy==0.770               # via -r requirements/dev.in
 packaging==20.3           # via pytest
 pip-tools==4.5.1          # via -r requirements/dev.in
 pluggy==0.13.1            # via pytest
+psycopg2-binary==2.8.5    # via -r requirements/base.txt, aiopg
 py==1.8.1                 # via pytest
 pycodestyle==2.5.0        # via flake8
 pyflakes==2.1.1           # via flake8
 pyparsing==2.4.7          # via packaging
 pytest-aiohttp==0.3.0     # via -r requirements/dev.in
 pytest==5.4.1             # via -r requirements/dev.in, pytest-aiohttp
+python-dateutil==2.8.1    # via -r requirements/base.txt, alembic
+python-editor==1.0.4      # via -r requirements/base.txt, alembic
 pyyaml==5.3.1             # via -r requirements/base.txt, jibrel-aiohttp-swagger
-six==1.14.0               # via packaging, pip-tools
-sqlalchemy==1.3.16        # via -r requirements/base.txt
+six==1.14.0               # via -r requirements/base.txt, packaging, pip-tools, python-dateutil
+sqlalchemy==1.3.16        # via -r requirements/base.txt, alembic
 typed-ast==1.4.1          # via mypy
 typing-extensions==3.7.4.2  # via mypy
 wcwidth==0.1.9            # via pytest

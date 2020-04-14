@@ -11,11 +11,13 @@ from billing.logs import configure_logs
         "show_default": True,
     },
 )
+@click.option("--db-dsn")
 @click.option("--log-level", default="INFO")
-@click.option("--port", type=int, default=8080)
-def main(log_level: str, port: int) -> None:
+@click.option("--api-port", type=int, default=8080)
+def main(db_dsn: str, log_level: str, api_port: int) -> None:
     configure_logs(level=log_level)
-    web.run_app(init_app(), port=port)
+    app = init_app(db_dsn=db_dsn)
+    web.run_app(app, port=api_port)
 
 
 if __name__ == '__main__':

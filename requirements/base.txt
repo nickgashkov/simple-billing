@@ -6,6 +6,8 @@
 #
 aiohttp-security==0.4.0   # via -r requirements/base.in
 aiohttp==3.6.2            # via -r requirements/base.in, aiohttp-security, jibrel-aiohttp-swagger
+aiopg==1.0.0              # via -r requirements/base.in
+alembic==1.4.2            # via -r requirements/base.in
 async-timeout==3.0.1      # via aiohttp
 attrs==19.3.0             # via aiohttp
 chardet==3.0.4            # via aiohttp
@@ -13,7 +15,13 @@ click==7.1.1              # via -r requirements/base.in
 idna==2.9                 # via yarl
 jibrel-aiohttp-swagger==0.1.0  # via -r requirements/base.in
 loguru==0.4.1             # via -r requirements/base.in
+mako==1.1.2               # via alembic
+markupsafe==1.1.1         # via mako
 multidict==4.7.5          # via aiohttp, yarl
+psycopg2-binary==2.8.5    # via aiopg
+python-dateutil==2.8.1    # via alembic
+python-editor==1.0.4      # via alembic
 pyyaml==5.3.1             # via jibrel-aiohttp-swagger
-sqlalchemy==1.3.16        # via -r requirements/base.in
+six==1.14.0               # via python-dateutil
+sqlalchemy==1.3.16        # via -r requirements/base.in, alembic
 yarl==1.4.2               # via aiohttp

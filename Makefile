@@ -1,3 +1,6 @@
+.PHONY: build shell lock isort lint mypy test validate migration migrate
+
+
 build:
 	@docker-compose build
 
@@ -5,7 +8,7 @@ run: build
 	docker-compose up api
 
 shell:
-	@docker-compose run --rm api sh
+	@docker-compose run --rm api bash
 
 lock:
 	@docker-compose run --rm api pip-compile requirements/base.in
@@ -23,9 +26,10 @@ mypy:
 test:
 	@docker-compose run --rm api pytest
 
-validate:
-	make build
-	make isort
-	make lint
-	make mypy
-	make test
+validate: build isort lint mypy test
+
+migration:
+	@docker-compose run --rm api dbmate -d "./billing/migrations" -s "./billing/migrations/schema.sql" -e BILLING_DB_DSN new $(message)
+
+migrate:
+	@docker-compose run --rm api dbmate -d "./billing/migrations" -s "./billing/migrations/schema.sql" -e BILLING_DB_DSN up
