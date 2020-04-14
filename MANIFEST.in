@@ -1,1 +1,2 @@
 include billing/api/v1.openapi.yml
+include billing/version.txt

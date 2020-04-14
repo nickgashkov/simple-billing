@@ -1,5 +1,6 @@
 aiohttp
 aiohttp-security
 click
+jibrel-aiohttp-swagger
 loguru
 sqlalchemy

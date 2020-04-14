@@ -4,6 +4,13 @@ from typing import List
 from setuptools import find_packages, setup
 
 
+def version() -> str:
+    root = Path(__file__).parent
+    filepath = root / 'billing' / 'version.txt'
+
+    return filepath.read_text().strip()
+
+
 def requires(name: str) -> List[str]:
     root = Path(__file__).parent
     filepath = root.joinpath(name)
@@ -13,7 +20,7 @@ def requires(name: str) -> List[str]:
 
 setup(
     name='Simple Billing',
-    version='0.1.0',
+    version=version(),
     packages=find_packages(),
     include_package_data=True,
     install_requires=requires('requirements/base.txt'),
