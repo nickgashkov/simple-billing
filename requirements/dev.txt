@@ -14,6 +14,7 @@ entrypoints==0.3          # via flake8
 flake8==3.7.9             # via -r requirements/dev.in
 idna==2.9                 # via -r requirements/base.txt, yarl
 isort==4.3.21             # via -r requirements/dev.in
+loguru==0.4.1             # via -r requirements/base.txt
 mccabe==0.6.1             # via flake8
 more-itertools==8.2.0     # via pytest
 multidict==4.7.5          # via -r requirements/base.txt, aiohttp, yarl
