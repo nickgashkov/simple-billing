@@ -1,0 +1,247 @@
+openapi: 3.0.0
+info:
+  title: Simple Billing API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Authentication
+  - name: Wallets
+paths:
+  /v1/auth/login:
+    post:
+      summary: Logs user in
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        '200':
+          description: A JSON object of a user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusSuccess"
+                  data:
+                    $ref: "#/components/schemas/User"
+        '400':
+          description: A JSON object of an error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+
+  /v1/auth/logout:
+    post:
+      summary: Logs user out
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: An empty data object.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusSuccess"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+
+  /v1/auth/register:
+    post:
+      summary: Registers user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        '200':
+          description: A JSON object of a user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /v1/wallets:
+    get:
+      summary: Retrieves a wallet
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Wallets
+      responses:
+        '200':
+          description: A JSON object of a wallet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+    post:
+      summary: Creates a wallet
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletCreateBody"
+      responses:
+        '200':
+          description: A JSON object of a wallet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+
+  /v1/wallets/transfer:
+    post:
+      summary: Transfers amount between users
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletTransferBody"
+      responses:
+        '200':
+          description: A JSON object of a wallet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+
+components:
+  schemas:
+    StatusSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Error"
+          example: []
+    StatusFailure:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        errors:
+          $ref: "#/components/schemas/Errors"
+    Errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Error"
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "MISSING"
+        message:
+          type: string
+          example: "Missing required field."
+        target:
+          type: string
+          example: "field_name"
+    NullData:
+      type: object
+      nullable: true
+      example: null
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        username:
+          type: string
+          example: "admin"
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        amount:
+          type: string
+          format: float
+          example: "42.01"
+
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "admin"
+        password:
+          type: string
+          example: "pass"
+    RegisterBody:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "admin"
+        password:
+          type: string
+          example: "pass"
+        passwordConfirm:
+          type: string
+          example: "pass"
+    WalletCreateBody:
+      type: object
+      properties:
+        faucet:
+          type: string
+          format: "float"
+          example: "42.01"
+    WalletTransferBody:
+      type: object
+      properties:
+        destination:
+          type: string
+          example: "admin"
+        amount:
+          type: string
+          format: "float"
+          example: "42.01"
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
