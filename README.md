@@ -34,4 +34,4 @@ API can be accessed at http://localhost:8080.
 API can be interacted with via cURL, HTTPie, Postman or via Swagger at
 http://localhost:8080/api/doc/. Also, quick API showcase can be found at YouTube:
 
-[![Simple Billing API Showcase](https://img.youtube.com/vi/e9FFsZTtBNc/0.jpg)](https://www.youtu.be/e9FFsZTtBNc)
+[![Simple Billing API Showcase](https://img.youtube.com/vi/e9FFsZTtBNc/0.jpg)](https://youtu.be/e9FFsZTtBNc)
