@@ -1,7 +1,12 @@
 aiohttp
 aiohttp-security
+aiohttp-session
 aiopg
 click
+cryptography
 jibrel-aiohttp-swagger
 loguru
+marshmallow
+passlib
 sqlalchemy
+webargs

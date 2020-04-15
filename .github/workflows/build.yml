@@ -44,7 +44,12 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install dependencies
-        run: pip install -r requirements/dev.txt
+        run: |
+          apt update
+          apt install -y curl
+          curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/download/v1.7.0/dbmate-linux-amd64
+          chmod +x /usr/local/bin/dbmate
+          pip install -r requirements/dev.txt
 
       - name: Lint
         run: |

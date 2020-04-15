@@ -1,8 +1,10 @@
 -r base.txt
 
+factory_boy
 flake8
 isort
 mypy
 pip-tools
 pytest
 pytest-aiohttp
+pytest-factoryboy
