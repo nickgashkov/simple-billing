@@ -65,6 +65,22 @@ async def register(
         password: str,
         password_confirm: str,
 ) -> web.Response:
+    user_with_requested_username = await get_user(request.app['db'], username)
+
+    if user_with_requested_username is not None:
+        return web.json_response(
+            status=400,
+            data=json_failure(
+                [
+                    {
+                        'code': 'INVALID_VALUE',
+                        'message': 'This username already taken.',
+                        'target': 'username',
+                    }
+                ]
+            ),
+        )
+
     await create_user(request.app['db'], username, password)
     user = await get_user(request.app['db'], username)
 

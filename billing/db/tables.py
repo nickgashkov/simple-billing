@@ -11,7 +11,7 @@ users = sa.Table(
         primary_key=True,
         server_default=sa.text("uuid_generate_v4()"),
     ),
-    sa.Column('username', sa.String()),
+    sa.Column('username', sa.String(), unique=True),
     sa.Column('password', sa.String()),
 )
 

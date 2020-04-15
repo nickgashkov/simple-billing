@@ -2,6 +2,7 @@ from typing import Dict
 
 import pytest
 from aiohttp.test_utils import TestClient
+from tests.fixtures.factories import UserFactory
 
 
 async def test_register_user_happy_path(cli: TestClient) -> None:
@@ -82,3 +83,26 @@ async def test_register_user_validation_errors(
 
     assert response.status == 400
     assert response_json["status"]["errors"] == [error]
+
+
+async def test_register_user_cannot_register_with_existing_user_email(
+        cli: TestClient,
+        user_factory: UserFactory,
+) -> None:
+    user_factory.create(username='admin')
+
+    response = await cli.post('/v1/auth/register', json={
+        'username': 'admin',
+        'password': 'pass',
+        'passwordConfirm': 'pass',
+    })
+    response_json = await response.json()
+
+    assert response.status == 400
+    assert response_json["status"]["errors"] == [
+        {
+            'code': 'INVALID_VALUE',
+            'message': 'This username already taken.',
+            'target': 'username',
+        }
+    ]

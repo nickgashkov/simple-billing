@@ -16,6 +16,13 @@ def migrate_db() -> Generator[None, None, None]:
     migrate_db_down()
 
 
+@pytest.fixture(autouse=True)
+async def truncate_db(db: Database) -> AsyncGenerator[None, None]:
+    yield
+    for table in tables:
+        await db.execute(delete(table))
+
+
 @pytest.fixture()
 def db_dsn() -> str:
     return settings.DB_DSN_TEST
@@ -28,7 +35,6 @@ async def db(db_dsn: str) -> AsyncGenerator[Database, None]:
     await database.start()
     yield database
 
-    await truncate(database)
     await database.stop()
 
 
@@ -65,8 +71,3 @@ def migrate_db_down_once() -> bool:
     done = "Error: can't rollback: no migrations have been applied" in output
 
     return done
-
-
-async def truncate(db: Database) -> None:
-    for table in tables:
-        await db.execute(delete(table))
