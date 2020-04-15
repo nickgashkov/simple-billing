@@ -1,5 +1,6 @@
+import datetime
 import decimal
-from typing import Any, Dict, NamedTuple
+from typing import Any, Dict, NamedTuple, Optional
 
 
 class User(NamedTuple):
@@ -29,11 +30,11 @@ class Wallet(NamedTuple):
 class Operation(NamedTuple):
     id: str
     wallet_id: str
-    source_wallet_id: str
+    source_wallet_id: Optional[str]
     destination_wallet_id: str
     type: str
     amount: decimal.Decimal
-    timestamp: int
+    timestamp: datetime.datetime
 
     def to_json(self) -> Dict[str, Any]:
         return {
@@ -41,6 +42,6 @@ class Operation(NamedTuple):
             "source_wallet_id": self.source_wallet_id,
             "destination_wallet_id": self.destination_wallet_id,
             "type": self.type,
-            "amount": self.amount,
-            "timestamp": self.timestamp,
+            "amount": str(self.amount),
+            "timestamp": self.timestamp.isoformat(),
         }

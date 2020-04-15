@@ -8,7 +8,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from billing import settings
 from billing.auth.authentication import hash_password
-from billing.db.tables import users, wallets
+from billing.db.tables import operations, users, wallets
 
 ENGINE = create_engine(settings.DB_DSN_TEST)
 BASE = declarative_base()
@@ -30,6 +30,10 @@ class UserModel(BASE):  # type: ignore
 
 class WalletModel(BASE):  # type: ignore
     __table__ = wallets
+
+
+class OperationModel(BASE):  # type: ignore
+    __table__ = operations
 
 
 class UserFactory(SQLAlchemyModelFactory):
@@ -62,13 +66,13 @@ class OperationFactory(SQLAlchemyModelFactory):
     )
     type = fuzzy.FuzzyChoice(['transfer'])
     amount = factory.Faker('pydecimal')
-    timestamp = factory.Faker('unix_time')
+    timestamp = factory.Faker('date_time')
 
     wallet = factory.SubFactory(WalletFactory)
     destination_wallet = factory.SubFactory(WalletFactory)
 
     class Meta:
-        model = WalletModel
+        model = OperationModel
         sqlalchemy_session = SESSION
         sqlalchemy_session_persistence = 'flush'
         exclude = ('user', 'wallet', 'destination_wallet')
@@ -76,3 +80,4 @@ class OperationFactory(SQLAlchemyModelFactory):
 
 register(UserFactory)
 register(WalletFactory)
+register(OperationFactory)

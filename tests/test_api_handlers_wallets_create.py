@@ -9,7 +9,7 @@ from tests.fixtures.factories import UserModel, WalletFactory
 @pytest.mark.parametrize(
     'faucet, expected_balance',
     (
-        ('1000.00', '1000.00'),
+        ('1000.42', '1000.42'),
         ('0.00', '0.00'),
         (None, '0.00'),
     )

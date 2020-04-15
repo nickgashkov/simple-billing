@@ -138,7 +138,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Wallet"
+                $ref: "#/components/schemas/Operation"
+
+  /v1/wallets/operations:
+    get:
+      summary: Retrieves users operations
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Wallets
+      responses:
+        '200':
+          description: An array of JSON objects of operations
+          content:
+            application/json:
+              schema:
+                status:
+                  $ref: "#/components/schemas/StatusSuccess"
+                data:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/User"
 
 components:
   schemas:
@@ -203,6 +223,33 @@ components:
           type: string
           format: float
           example: "42.01"
+    Operation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        source_wallet_id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        destination_wallet_id:
+          type: string
+          format: uuid
+          example: "1bb41739-afb5-41c5-aaee-b344f7066bf9"
+        type:
+          type: string
+          enum:
+            - "FAUCET"
+            - "TRANSFER"
+        amount:
+          type: string
+          format: float
+          example: "-42.01"
+        timestamp:
+          type: string
+          format: date-time
 
     LoginBody:
       type: object

@@ -11,6 +11,7 @@ from billing.api.parser import use_kwargs
 from billing.db.storage import (
     create_operation_faucet,
     create_wallet,
+    get_operations,
     get_wallet,
     get_wallet_balance,
 )
@@ -30,7 +31,16 @@ async def retrieve(request: web.Request) -> web.Response:
 
 @login_required
 async def operations(request: web.Request) -> web.Response:
-    return web.json_response()
+    user_id = await authorized_userid(request)
+    wallet = await get_wallet(request.app['db'], user_id)
+
+    if wallet is None:
+        return responses.not_found("Wallet does not exist.")
+
+    ops = await get_operations(request.app['db'], wallet.id)
+    ops_json = [op.to_json() for op in ops]
+
+    return responses.success(ops_json)
 
 
 @login_required
