@@ -1,6 +1,3 @@
-.PHONY: build shell lock isort lint mypy test validate migration migrate
-
-
 build:
 	@docker-compose build
 
