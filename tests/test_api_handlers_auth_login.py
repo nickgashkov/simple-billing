@@ -46,7 +46,7 @@ async def test_user_cannot_login_with_invalid_credentials(
         401,
         [
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNAUTHORIZED',
                 'message': "Invalid username or password.",
                 'target': '__all__',
             },
@@ -62,7 +62,7 @@ async def test_user_cannot_login_with_invalid_credentials(
         (
             {'password': 'pass'},
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Missing data for required field.",
                 'target': 'username',
             },
@@ -70,7 +70,7 @@ async def test_user_cannot_login_with_invalid_credentials(
         (
             {'username': 'admin'},
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Missing data for required field.",
                 'target': 'password',
             },
@@ -90,5 +90,5 @@ async def test_login_user_sad_paths(
     response_json = await response.json()
 
     actual = (response.status, response_json["status"]["errors"])
-    expected = (400, [error])
+    expected = (422, [error])
     assert actual == expected

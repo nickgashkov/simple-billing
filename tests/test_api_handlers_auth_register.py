@@ -27,7 +27,7 @@ async def test_register_user_happy_path(cli: TestClient) -> None:
                 'passwordConfirm': '123',
             },
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Password does not match it's confirmation.",
                 'target': '__all__',
             },
@@ -38,7 +38,7 @@ async def test_register_user_happy_path(cli: TestClient) -> None:
                 'passwordConfirm': '123',
             },
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Missing data for required field.",
                 'target': 'username',
             },
@@ -49,7 +49,7 @@ async def test_register_user_happy_path(cli: TestClient) -> None:
                 'passwordConfirm': '123',
             },
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Missing data for required field.",
                 'target': 'password',
             },
@@ -60,7 +60,7 @@ async def test_register_user_happy_path(cli: TestClient) -> None:
                 'password': 'pass',
             },
             {
-                'code': 'INVALID_VALUE',
+                'code': 'UNPROCESSABLE_ENTITY',
                 'message': "Missing data for required field.",
                 'target': 'passwordConfirm',
             },
@@ -81,7 +81,7 @@ async def test_register_user_validation_errors(
     response = await cli.post('/v1/auth/register', json=body)
     response_json = await response.json()
 
-    assert response.status == 400
+    assert response.status == 422
     assert response_json["status"]["errors"] == [error]
 
 
@@ -101,7 +101,7 @@ async def test_register_user_cannot_register_with_existing_user_email(
     assert response.status == 400
     assert response_json["status"]["errors"] == [
         {
-            'code': 'INVALID_VALUE',
+            'code': 'BAD_REQUEST',
             'message': 'This username already taken.',
             'target': 'username',
         }

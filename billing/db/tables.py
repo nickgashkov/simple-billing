@@ -35,9 +35,16 @@ operations = sa.Table(
         server_default=sa.text("uuid_generate_v4()"),
     ),
     sa.Column('wallet_id', sa.ForeignKey('wallets.id')),
+    sa.Column('source_wallet_id', sa.ForeignKey('wallets.id')),
+    sa.Column('destination_wallet_id', sa.ForeignKey('wallets.id')),
+    sa.Column('type', sa.String()),
+    sa.Column('amount', sa.Numeric(1000, 2)),
+    sa.Column('timestamp', postgresql.TIMESTAMP()),
 )
 
 
 tables = (
     users,
+    wallets,
+    operations,
 )

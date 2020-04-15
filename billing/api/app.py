@@ -8,7 +8,7 @@ from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from jibrel_aiohttp_swagger import setup_swagger
 
 from billing import settings
-from billing.api.handlers import auth, monitoring
+from billing.api.handlers import auth, monitoring, wallets
 from billing.auth.authorization import DbAuthorizationPolicy
 from billing.db.wrapper import Database
 
@@ -26,6 +26,11 @@ def init_app(
     app.router.add_post('/v1/auth/login', auth.login)
     app.router.add_post('/v1/auth/logout', auth.logout)
     app.router.add_post('/v1/auth/register', auth.register)
+
+    app.router.add_get('/v1/wallets', wallets.retrieve)
+    app.router.add_get('/v1/wallets/operations', wallets.operations)
+    app.router.add_post('/v1/wallets', wallets.create)
+    app.router.add_post('/v1/wallets/transfer', wallets.transfer)
 
     app.router.add_get('/healthcheck', monitoring.healthcheck)
 

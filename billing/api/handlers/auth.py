@@ -2,7 +2,7 @@ from aiohttp import web
 from aiohttp_security import forget, remember
 from webargs import fields
 
-from billing.api.bodies import json_failure, json_success
+from billing.api import responses
 from billing.api.parser import use_kwargs
 from billing.api.validators.auth import validate_password_matches
 from billing.auth.authentication import is_password_correct
@@ -24,26 +24,15 @@ async def login(
     success = user and is_password_correct(password, user.password)
 
     if not success or not user:
-        return web.json_response(
-            status=401,
-            data=json_failure(
-                errors=[
-                    {
-                        'code': 'INVALID_VALUE',
-                        'message': 'Invalid username or password.',
-                        'target': '__all__',
-                    }
-                ],
-            )
-        )
+        return responses.unauthorized(message="Invalid username or password.")
 
-    response = web.json_response(json_success(data=user.to_json()))
+    response = responses.success(user.to_json())
     await remember(request, response, username)
     return response
 
 
 async def logout(request: web.Request) -> web.Response:
-    response = web.json_response(json_success(data=None))
+    response = responses.success(data=None)
     await forget(request, response)
     return response
 
@@ -68,25 +57,13 @@ async def register(
     user_with_requested_username = await get_user(request.app['db'], username)
 
     if user_with_requested_username is not None:
-        return web.json_response(
-            status=400,
-            data=json_failure(
-                [
-                    {
-                        'code': 'INVALID_VALUE',
-                        'message': 'This username already taken.',
-                        'target': 'username',
-                    }
-                ]
-            ),
+        return responses.bad_request(
+            message="This username already taken.",
+            target="username",
         )
 
-    await create_user(request.app['db'], username, password)
-    user = await get_user(request.app['db'], username)
+    user = await create_user(request.app['db'], username, password)
 
-    if not user:
-        raise web.HTTPInternalServerError()
-
-    response = web.json_response(json_success(data=user.to_json()))
+    response = responses.success(user.to_json())
     await remember(request, response, username)
     return response

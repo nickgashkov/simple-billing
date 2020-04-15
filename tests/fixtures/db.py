@@ -2,9 +2,9 @@ import subprocess
 from typing import AsyncGenerator, Generator
 
 import pytest
-from sqlalchemy import delete
 
 from billing import settings
+from billing.db.clauses import truncate
 from billing.db.tables import tables
 from billing.db.wrapper import Database
 
@@ -19,8 +19,7 @@ def migrate_db() -> Generator[None, None, None]:
 @pytest.fixture(autouse=True)
 async def truncate_db(db: Database) -> AsyncGenerator[None, None]:
     yield
-    for table in tables:
-        await db.execute(delete(table))
+    await db.execute(truncate(tables))
 
 
 @pytest.fixture()
