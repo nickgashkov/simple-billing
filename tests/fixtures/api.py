@@ -1,5 +1,5 @@
 from asyncio import AbstractEventLoop
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, Optional
 
 import pytest
 from aiohttp import web
@@ -42,9 +42,12 @@ async def login(
         cli: TestClient,
         user_factory: UserFactory,
 ) -> Callable[[KwArg(Any)], Awaitable[UserModel]]:
-    async def login_(**kwargs: Any) -> UserModel:
+    async def login_(
+            user: Optional[UserModel] = None,
+            **kwargs: Any,
+    ) -> UserModel:
         kwargs.setdefault('password_raw', 'pass')
-        user = user_factory.create(**kwargs)
+        user = user or user_factory.create(**kwargs)
 
         await cli.post('/v1/auth/login', json={
             'username': user.username,

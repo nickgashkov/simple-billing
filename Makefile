@@ -4,7 +4,7 @@
 build:
 	@docker-compose build
 
-run: build
+run: build migrate
 	docker-compose up api
 
 shell:

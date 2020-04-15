@@ -86,14 +86,27 @@ async def create_operation_transfer(
         destination_wallet_id: str,
         amount: decimal.Decimal,
 ) -> List[Operation]:
-    query = queries.create_operation_transfer(
+    source_operations_query = queries.get_operations_amounts_by_wallet_id(
+        source_wallet_id
+    )
+    create_transfer_query = queries.create_operation_transfer(
         source_wallet_id,
         destination_wallet_id,
         amount,
     )
-    rows = await db.all(query)
 
-    if not rows:
-        raise RuntimeError("Database didn't return operations after INSERT")
+    async with db.engine.acquire() as conn:
+        async with conn.begin():
+            ops = await db.all(source_operations_query, conn)
+            balance = functools.reduce(
+                operator.add,
+                (op['amount'] for op in ops),
+                decimal.Decimal('0.00')
+            )
+
+            if balance < amount:
+                raise RuntimeError("Insufficient funds for user")
+
+            rows = await db.all(create_transfer_query, conn)
 
     return [Operation(**row) for row in rows]

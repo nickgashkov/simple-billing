@@ -21,7 +21,7 @@ paths:
               $ref: "#/components/schemas/LoginBody"
       responses:
         '200':
-          description: A JSON object of a user
+          description: Returns JSON object of a user.
           content:
             application/json:
               schema:
@@ -35,9 +35,9 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: sessionid="gAAAAABeleYOqtssLMNr26Oom2snWPe-8XepwdklnQGKpEkPpAxaojYeU3iH_1IOOpYT0R2Ig1-g0XNk0rKplZAbFSsZhS5Eg0GzoOcQnB6iGxdpwVna5Moor8_2r-GVgHwhdejQUlYqizPQJJdFStpgDv5bszG9holF23gXmQa-CyjMxquuUMc="; Path=/; HttpOnly
-        '400':
-          description: A JSON object of an error
+                example: sessionid="Cookie="; Path=/; HttpOnly
+        '422':
+          description: Returns a JSON object of an error if input failed validation.
           content:
             application/json:
               schema:
@@ -55,7 +55,7 @@ paths:
         - Authentication
       responses:
         '200':
-          description: An empty data object.
+          description: Returns an empty data object.
           content:
             application/json:
               schema:
@@ -79,11 +79,22 @@ paths:
               $ref: "#/components/schemas/RegisterBody"
       responses:
         '200':
-          description: A JSON object of a user
+          description: Returns a JSON object of a user.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        '422':
+          description: Returns a JSON object of an error if input failed validation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
 
   /v1/wallets:
     get:
@@ -94,11 +105,33 @@ paths:
         - Wallets
       responses:
         '200':
-          description: A JSON object of a wallet
+          description: Returns a JSON object of a wallet.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Wallet"
+        '401':
+          description: Returns a JSON object of an error if user hasn't authorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '404':
+          description: Returns a JSON object of an error if user has no wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
     post:
       summary: Creates a wallet
       security:
@@ -113,11 +146,55 @@ paths:
               $ref: "#/components/schemas/WalletCreateBody"
       responses:
         '200':
-          description: A JSON object of a wallet
+          description: Returns a JSON object of a wallet.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Wallet"
+        '400':
+          description: Returns a JSON object of an error if user already have a wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '401':
+          description: Returns a JSON object of an error if user hasn't authorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '404':
+          description: Returns a JSON object of an error if user has no wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '422':
+          description: Returns a JSON object of an error if input failed validation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
 
   /v1/wallets/transfer:
     post:
@@ -134,11 +211,55 @@ paths:
               $ref: "#/components/schemas/WalletTransferBody"
       responses:
         '200':
-          description: A JSON object of a wallet
+          description: Returns a JSON object of an operation.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operation"
+        '400':
+          description: Returns a JSON object of an error if user has insufficient funds.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '401':
+          description: Returns a JSON object of an error if user hasn't authorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '404':
+          description: Returns a JSON object of an error if user has no wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '422':
+          description: Returns a JSON object of an error if input failed validation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
 
   /v1/wallets/operations:
     get:
@@ -149,16 +270,40 @@ paths:
         - Wallets
       responses:
         '200':
-          description: An array of JSON objects of operations
+          description: Returns an array of JSON operations objects.
           content:
             application/json:
               schema:
-                status:
-                  $ref: "#/components/schemas/StatusSuccess"
-                data:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusSuccess"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Operation"
+        '401':
+          description: Returns a JSON object of an error if user hasn't authorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+        '404':
+          description: Returns a JSON object of an error if user has no wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
 
 components:
   schemas:
@@ -190,13 +335,17 @@ components:
       properties:
         code:
           type: string
-          example: "MISSING"
+          enum:
+            - BAD_REQUEST
+            - UNAUTHORIZED
+            - NOT_FOUND
+            - UNPROCESSABLE_ENTITY
         message:
           type: string
           example: "Missing required field."
         target:
           type: string
-          example: "field_name"
+          example: "field"
     NullData:
       type: object
       nullable: true
@@ -284,7 +433,8 @@ components:
       properties:
         destination:
           type: string
-          example: "admin"
+          format: "uuid"
+          example: "1bb41739-afb5-41c5-aaee-b344f7066bf9"
         amount:
           type: string
           format: "float"

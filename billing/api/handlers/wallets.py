@@ -1,4 +1,5 @@
 import decimal
+import uuid
 from typing import Optional
 
 from aiohttp import web
@@ -10,6 +11,7 @@ from billing.api.authentication import login_required
 from billing.api.parser import use_kwargs
 from billing.db.storage import (
     create_operation_faucet,
+    create_operation_transfer,
     create_wallet,
     get_operations,
     get_wallet,
@@ -70,5 +72,35 @@ async def create(
 
 
 @login_required
-async def transfer(request: web.Request) -> web.Response:
-    return web.json_response()
+@use_kwargs(
+    {
+        "destination": fields.UUID(required=True),
+        "amount": fields.Decimal(required=True),
+    }
+)
+async def transfer(
+        request: web.Request,
+        destination: uuid.UUID,
+        amount: decimal.Decimal,
+) -> web.Response:
+    user_id = await authorized_userid(request)
+    wallet = await get_wallet(request.app['db'], user_id)
+
+    if wallet is None:
+        return responses.not_found("Wallet does not exist.")
+
+    wallet_balance = await get_wallet_balance(request.app['db'], wallet.id)
+
+    if wallet_balance < amount:
+        return responses.bad_request("Insufficient funds.")
+
+    ops = await create_operation_transfer(
+        request.app['db'],
+        source_wallet_id=wallet.id,
+        destination_wallet_id=str(destination),
+        amount=amount,
+    )
+
+    op = ops[0]
+
+    return responses.success(op.to_json())

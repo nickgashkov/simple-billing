@@ -82,7 +82,7 @@ async def test_user_cannot_create_wallet_if_them_already_has_one(
     assert actual == expected
 
 
-async def test_retrieve_wallet_requires_login(cli: TestClient) -> None:
+async def test_create_wallet_requires_login(cli: TestClient) -> None:
     response = await cli.post('/v1/wallets')
     response_json = await response.json()
 

@@ -86,7 +86,7 @@ async def test_user_cannot_see_operations_of_another_user(
     assert actual == expected
 
 
-async def test_retrieve_wallet_requires_login(cli: TestClient) -> None:
+async def test_operations_requires_login(cli: TestClient) -> None:
     response = await cli.get('/v1/wallets/operations')
     response_json = await response.json()
 
