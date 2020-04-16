@@ -1,5 +1,7 @@
 import decimal
 import uuid
+from datetime import datetime
+from typing import Optional
 
 from aiohttp import web
 from aiohttp_security import authorized_userid
@@ -15,6 +17,8 @@ from billing.db.storage import (
     get_wallet,
     get_wallet_balance,
 )
+from billing.typings import Order
+from webargs import validate
 
 
 @login_required
@@ -30,7 +34,19 @@ async def retrieve(request: web.Request) -> web.Response:
 
 
 @login_required
-async def operations(request: web.Request) -> web.Response:
+@use_kwargs(
+    {
+        "timestamp": fields.DateTime(),
+        "order": fields.String(validate=[validate.OneOf("asc", "desc")]),
+        "limit": fields.Integer(validate=[validate.Range(min=1, max=1000)]),
+    }
+)
+async def operations(
+        request: web.Request,
+        timestamp: Optional[datetime] = None,
+        order: Optional[Order] = None,
+        limit: int = 100,
+) -> web.Response:
     user_id = await authorized_userid(request)
     wallet = await get_wallet(request.app['db'], user_id)
 
@@ -44,7 +60,15 @@ async def operations(request: web.Request) -> web.Response:
 
 
 @login_required
-@use_kwargs({"amount": fields.Decimal(places=2, required=True)})
+@use_kwargs(
+    {
+        "amount": fields.Decimal(
+            places=2,
+            required=True,
+            validate=[validate.Range(min=decimal.Decimal("0.01"))]
+        ),
+    },
+)
 async def deposit(
         request: web.Request,
         amount: decimal.Decimal,
@@ -64,7 +88,11 @@ async def deposit(
 @use_kwargs(
     {
         "destination": fields.UUID(required=True),
-        "amount": fields.Decimal(required=True),
+        "amount": fields.Decimal(
+            places=2,
+            required=True,
+            validate=[validate.Range(min=decimal.Decimal("0.01"))]
+        ),
     }
 )
 async def transfer(
