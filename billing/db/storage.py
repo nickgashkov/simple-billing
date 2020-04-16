@@ -1,12 +1,14 @@
 import decimal
 import functools
 import operator
+from datetime import datetime
 from typing import List, Optional
 
 from billing.auth.authentication import hash_password
 from billing.db import queries
 from billing.db.wrapper import Database
 from billing.structs import Operation, User, Wallet
+from billing.typings import Order
 
 
 async def get_user(db: Database, username: str) -> Optional[User]:
@@ -39,8 +41,19 @@ async def get_wallet_balance(db: Database, wallet_id: str) -> decimal.Decimal:
     return functools.reduce(operator.add, (row['amount'] for row in rows))
 
 
-async def get_operations(db: Database, wallet_id: str) -> List[Operation]:
-    query = queries.get_operations_by_wallet_id(wallet_id)
+async def get_operations(
+        db: Database,
+        wallet_id: str,
+        timestamp: Optional[datetime],
+        order: Order,
+        limit: int,
+) -> List[Operation]:
+    query = queries.get_operations_by_wallet_id(
+        wallet_id,
+        timestamp,
+        order,
+        limit,
+    )
     rows = await db.all(query)
 
     return [Operation(**row) for row in rows]

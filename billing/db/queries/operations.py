@@ -1,12 +1,14 @@
 import decimal
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from sqlalchemy import insert, select
 from sqlalchemy.sql import Insert, Select
 
+from billing.db.paging import paginate
 from billing.db.tables import operations
 from billing.resources import OperationType
+from billing.typings import Order
 
 everything = [
     operations.c.id,
@@ -19,8 +21,16 @@ everything = [
 ]
 
 
-def get_operations_by_wallet_id(wallet_id: str) -> Select:
-    return select(everything).where(operations.c.wallet_id == wallet_id)
+def get_operations_by_wallet_id(
+        wallet_id: str,
+        timestamp: Optional[datetime],
+        order: Order,
+        limit: int,
+) -> Select:
+    query = select(everything).where(operations.c.wallet_id == wallet_id)
+    query = paginate(query, {operations.c.timestamp: timestamp}, order, limit)
+
+    return query
 
 
 def get_operations_amounts_by_wallet_id(wallet_id: str) -> Select:

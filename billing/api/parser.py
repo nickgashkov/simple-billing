@@ -54,7 +54,9 @@ def _get_error_body_from_marshmallow(
     errors = []
 
     if isinstance(error.messages, dict):
-        messages = error.messages["json"]
+        messages = error.messages.get("json")
+        messages = messages or error.messages.get("query")
+        messages = messages or {}
     else:
         messages = error.messages
 

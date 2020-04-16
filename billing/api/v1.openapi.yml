@@ -136,6 +136,10 @@ paths:
   /v1/wallets/operations:
     get:
       summary: Retrieves users operations
+      parameters:
+        - $ref: '#/components/parameters/timestamp'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/order'
       security:
         - ApiKeyAuth: []
       tags:
@@ -430,6 +434,34 @@ components:
           type: string
           format: "float"
           example: "42.01"
+
+  parameters:
+    timestamp:
+      name: timestamp
+      in: query
+      description: ISO-formatted timestamp
+      required: false
+      schema:
+        type: string
+        format: date-time
+    order:
+      name: order
+      in: query
+      description: Order direction
+      required: false
+      schema:
+        type: string
+        enum:
+          - "asc"
+          - "desc"
+
+    limit:
+      name: limit
+      in: query
+      description: Dataset limit
+      required: false
+      schema:
+        type: integer
 
   securitySchemes:
     ApiKeyAuth:
