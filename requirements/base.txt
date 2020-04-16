@@ -14,6 +14,7 @@ cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via aiohttp
 click==7.1.1              # via -r requirements/base.in
 cryptography==2.9         # via -r requirements/base.in
+dsnparse==0.1.15          # via -r requirements/base.in
 idna==2.9                 # via yarl
 jibrel-aiohttp-swagger==0.1.0  # via -r requirements/base.in
 loguru==0.4.1             # via -r requirements/base.in

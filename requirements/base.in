@@ -4,6 +4,7 @@ aiohttp-session
 aiopg
 click
 cryptography
+dsnparse
 jibrel-aiohttp-swagger
 loguru
 marshmallow
