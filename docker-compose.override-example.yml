@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  api:
+    build:
+      args:
+        ENVIRONMENT: "DEVELOPMENT"
+    environment:
+      CUSTOM_COMPILE_COMMAND: "make lock"
+      BILLING_SECRET_KEY: "NQLSo4kyVKvWRDeo4tP_z25GPK4pN4vvrb14zv4SXI8="
+    volumes:
+      - ./:/app
+    ports:
+      - 8080:8080
