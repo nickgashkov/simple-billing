@@ -29,12 +29,15 @@ def get_operations_amounts_by_wallet_id(wallet_id: str) -> Select:
     )
 
 
-def create_operation_faucet(wallet_id: str, amount: decimal.Decimal) -> Insert:
+def create_operation_deposit(
+        wallet_id: str,
+        amount: decimal.Decimal,
+) -> Insert:
     return insert(operations).values(
         wallet_id=wallet_id,
         source_wallet_id=None,
         destination_wallet_id=wallet_id,
-        type=OperationType.FAUCET,
+        type=OperationType.DEPOSIT,
         amount=amount,
         timestamp=datetime.now(),
     ).returning(*everything)

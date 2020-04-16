@@ -1,6 +1,5 @@
 import decimal
 import uuid
-from typing import Optional
 
 from aiohttp import web
 from aiohttp_security import authorized_userid
@@ -10,9 +9,8 @@ from billing.api import responses
 from billing.api.authentication import login_required
 from billing.api.parser import use_kwargs
 from billing.db.storage import (
-    create_operation_faucet,
+    create_operation_deposit,
     create_operation_transfer,
-    create_wallet,
     get_operations,
     get_wallet,
     get_wallet_balance,
@@ -46,29 +44,20 @@ async def operations(request: web.Request) -> web.Response:
 
 
 @login_required
-@use_kwargs({"faucet": fields.Decimal(places=2, required=False)})
-async def create(
+@use_kwargs({"amount": fields.Decimal(places=2, required=True)})
+async def deposit(
         request: web.Request,
-        faucet: Optional[decimal.Decimal] = None,
+        amount: decimal.Decimal,
 ) -> web.Response:
     user_id = await authorized_userid(request)
-    already_created_wallet = await get_wallet(request.app['db'], user_id)
+    wallet = await get_wallet(request.app['db'], user_id)
 
-    if already_created_wallet is not None:
-        return responses.bad_request(message="Wallet already exists.")
+    if wallet is None:
+        return responses.not_found("Wallet does not exist.")
 
-    wallet = await create_wallet(request.app['db'], user_id)
+    op = await create_operation_deposit(request.app['db'], wallet.id, amount)
 
-    if faucet:
-        await create_operation_faucet(
-            request.app['db'],
-            wallet.id,
-            amount=faucet,
-        )
-
-    wallet_balance = await get_wallet_balance(request.app['db'], wallet.id)
-
-    return responses.created(wallet.to_json(balance=wallet_balance))
+    return responses.success(op.to_json())
 
 
 @login_required

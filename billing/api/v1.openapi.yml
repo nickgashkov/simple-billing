@@ -132,27 +132,30 @@ paths:
                     $ref: "#/components/schemas/StatusFailure"
                   data:
                     $ref: "#/components/schemas/NullData"
-    post:
-      summary: Creates a wallet
+
+  /v1/wallets/operations:
+    get:
+      summary: Retrieves users operations
       security:
         - ApiKeyAuth: []
       tags:
         - Wallets
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/WalletCreateBody"
       responses:
         '200':
-          description: Returns a JSON object of a wallet.
+          description: Returns an array of JSON operations objects.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Wallet"
-        '400':
-          description: Returns a JSON object of an error if user already have a wallet.
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusSuccess"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Operation"
+        '401':
+          description: Returns a JSON object of an error if user hasn't authorized.
           content:
             application/json:
               schema:
@@ -162,6 +165,38 @@ paths:
                     $ref: "#/components/schemas/StatusFailure"
                   data:
                     $ref: "#/components/schemas/NullData"
+        '404':
+          description: Returns a JSON object of an error if user has no wallet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/StatusFailure"
+                  data:
+                    $ref: "#/components/schemas/NullData"
+
+  /v1/wallets/deposit:
+    post:
+      summary: Deposits a wallet with requested amount
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletDepositBody"
+      responses:
+        '200':
+          description: Returns a JSON object of an operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operation"
         '401':
           description: Returns a JSON object of an error if user hasn't authorized.
           content:
@@ -251,50 +286,6 @@ paths:
                     $ref: "#/components/schemas/NullData"
         '422':
           description: Returns a JSON object of an error if input failed validation.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    $ref: "#/components/schemas/StatusFailure"
-                  data:
-                    $ref: "#/components/schemas/NullData"
-
-  /v1/wallets/operations:
-    get:
-      summary: Retrieves users operations
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Wallets
-      responses:
-        '200':
-          description: Returns an array of JSON operations objects.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    $ref: "#/components/schemas/StatusSuccess"
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Operation"
-        '401':
-          description: Returns a JSON object of an error if user hasn't authorized.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    $ref: "#/components/schemas/StatusFailure"
-                  data:
-                    $ref: "#/components/schemas/NullData"
-        '404':
-          description: Returns a JSON object of an error if user has no wallet.
           content:
             application/json:
               schema:
@@ -421,10 +412,10 @@ components:
         passwordConfirm:
           type: string
           example: "pass"
-    WalletCreateBody:
+    WalletDepositBody:
       type: object
       properties:
-        faucet:
+        amount:
           type: string
           format: "float"
           example: "42.01"

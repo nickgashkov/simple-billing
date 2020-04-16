@@ -106,3 +106,19 @@ async def test_register_user_cannot_register_with_existing_user_email(
             'target': 'username',
         }
     ]
+
+
+async def test_register_user_creates_corresponding_wallet_with_zero_balance(
+        cli: TestClient,
+) -> None:
+    await cli.post('/v1/auth/register', json={
+        'username': 'admin',
+        'password': 'pass',
+        'passwordConfirm': 'pass',
+    })
+
+    response = await cli.get('/v1/wallets')
+    response_json = await response.json()
+
+    assert response.status == 200
+    assert response_json["data"]["balance"] == "0.00"

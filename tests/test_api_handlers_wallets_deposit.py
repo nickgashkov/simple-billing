@@ -6,39 +6,32 @@ from mypy_extensions import KwArg
 from tests.fixtures.factories import UserModel, WalletFactory
 
 
-@pytest.mark.parametrize(
-    'faucet, expected_balance',
-    (
-        ('1000.42', '1000.42'),
-        ('0.00', '0.00'),
-        (None, '0.00'),
-    )
-)
-async def test_user_can_create_their_wallet(
+@pytest.mark.parametrize('amount', ('1000.42', '0.01'))
+async def test_user_can_perform_deposit(
         cli: TestClient,
         login: Callable[[KwArg(Any)], Awaitable[UserModel]],
-        faucet: Optional[str],
-        expected_balance: str,
+        amount: Optional[str],
+        wallet_factory: WalletFactory,
 ) -> None:
-    await login()
+    user = await login()
+    wallet_factory.create(user=user)
 
-    request_json = {} if faucet is None else {'faucet': faucet}
-    response = await cli.post('/v1/wallets', json=request_json)
+    response = await cli.post('/v1/wallets/deposit', json={'amount': amount})
     response_json = await response.json()
 
-    actual = (response.status, response_json['data']['balance'])
-    expected = (201, expected_balance)
+    actual = (response.status, response_json['data']['amount'])
+    expected = (200, amount)
 
     assert actual == expected
 
 
-async def test_user_cannot_create_wallet_with_invalid_faucet(
+async def test_user_cannot_deposit_wallet_with_invalid_amount(
         cli: TestClient,
         login: Callable[[KwArg(Any)], Awaitable[UserModel]],
 ) -> None:
     await login()
 
-    response = await cli.post('/v1/wallets', json={'faucet': 'string'})
+    response = await cli.post('/v1/wallets/deposit', json={'amount': 'string'})
     response_json = await response.json()
 
     actual = (response.status, response_json['status']['errors'])
@@ -48,7 +41,7 @@ async def test_user_cannot_create_wallet_with_invalid_faucet(
             {
                 'code': 'UNPROCESSABLE_ENTITY',
                 'message': 'Not a valid number.',
-                'target': 'faucet',
+                'target': 'amount',
             }
         ],
     )
@@ -56,34 +49,32 @@ async def test_user_cannot_create_wallet_with_invalid_faucet(
     assert actual == expected
 
 
-async def test_user_cannot_create_wallet_if_them_already_has_one(
+async def test_deposit_requires_existing_wallet(
         cli: TestClient,
         login: Callable[[KwArg(Any)], Awaitable[UserModel]],
-        wallet_factory: WalletFactory,
 ) -> None:
-    user = await login()
-    wallet_factory.create(user=user)
+    await login()
 
-    response = await cli.post('/v1/wallets')
+    response = await cli.post('/v1/wallets/deposit', json={'amount': '10.00'})
     response_json = await response.json()
 
     actual = (response.status, response_json['status']['errors'])
     expected = (
-        400,
+        404,
         [
             {
-                'code': 'BAD_REQUEST',
-                'message': 'Wallet already exists.',
+                'code': 'NOT_FOUND',
+                'message': "Wallet does not exist.",
                 'target': '__all__',
             }
-        ],
+        ]
     )
 
     assert actual == expected
 
 
 async def test_create_wallet_requires_login(cli: TestClient) -> None:
-    response = await cli.post('/v1/wallets')
+    response = await cli.post('/v1/wallets/deposit')
     response_json = await response.json()
 
     actual = (response.status, response_json['status']['errors'])

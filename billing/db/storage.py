@@ -66,12 +66,12 @@ async def create_wallet(db: Database, user_id: str) -> Wallet:
     return Wallet(**row)
 
 
-async def create_operation_faucet(
+async def create_operation_deposit(
         db: Database,
         wallet_id: str,
         amount: decimal.Decimal,
 ) -> Operation:
-    query = queries.create_operation_faucet(wallet_id, amount)
+    query = queries.create_operation_deposit(wallet_id, amount)
     row = await db.one(query)
 
     if row is None:

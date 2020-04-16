@@ -29,7 +29,7 @@ def init_app(
 
     app.router.add_get('/v1/wallets', wallets.retrieve)
     app.router.add_get('/v1/wallets/operations', wallets.operations)
-    app.router.add_post('/v1/wallets', wallets.create)
+    app.router.add_post('/v1/wallets/deposit', wallets.deposit)
     app.router.add_post('/v1/wallets/transfer', wallets.transfer)
 
     app.router.add_get('/healthcheck', monitoring.healthcheck)

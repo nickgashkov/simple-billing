@@ -1,3 +1,3 @@
 class OperationType:
-    FAUCET = "FAUCET"
+    DEPOSIT = "DEPOSIT"
     TRANSFER = "TRANSFER"

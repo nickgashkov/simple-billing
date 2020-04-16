@@ -6,7 +6,7 @@ from billing.api import responses
 from billing.api.parser import use_kwargs
 from billing.api.validators.auth import validate_password_matches
 from billing.auth.authentication import is_password_correct
-from billing.db.storage import create_user, get_user
+from billing.db.storage import create_user, create_wallet, get_user
 
 
 @use_kwargs(
@@ -63,6 +63,7 @@ async def register(
         )
 
     user = await create_user(request.app['db'], username, password)
+    await create_wallet(request.app['db'], user.id)
 
     response = responses.success(user.to_json())
     await remember(request, response, username)
